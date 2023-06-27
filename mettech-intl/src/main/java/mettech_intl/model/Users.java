@@ -1,5 +1,6 @@
 package mettech_intl.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.ArrayList;
@@ -16,6 +17,7 @@ public class Users {
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
+    @JsonIgnore
     @Column(name="password", nullable = false, length = 1000)
     private String password;
 
@@ -28,6 +30,7 @@ public class Users {
     @Column(name = "last_name", nullable=false)
     private String lastName;
 
+    @JsonIgnore
     @OneToMany(mappedBy="user", cascade=CascadeType.REMOVE, orphanRemoval = true)
     private List<Address> addresses = new ArrayList<>();
 

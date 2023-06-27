@@ -5,10 +5,11 @@ import mettech_intl.api.models.LoginBody;
 import mettech_intl.api.models.LoginResponse;
 import mettech_intl.api.models.RegistrationBody;
 import mettech_intl.exception.UserAlreadyExistsException;
+import mettech_intl.model.Users;
 import mettech_intl.service.UserService;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -41,5 +42,11 @@ public class AuthenticationController {
             response.setJwt(jwt);
             return ResponseEntity.ok(response);
         }
+    }
+
+    @GetMapping("/me")
+    public Users getLoggedInUserProfile(@AuthenticationPrincipal Users user){
+        return user;
+
     }
 }
