@@ -4,7 +4,9 @@ import jakarta.validation.Valid;
 import mettech_intl.api.models.LoginBody;
 import mettech_intl.api.models.LoginResponse;
 import mettech_intl.api.models.RegistrationBody;
+import mettech_intl.exception.EmailFailureException;
 import mettech_intl.exception.UserAlreadyExistsException;
+import mettech_intl.exception.UserNotVerifiedException;
 import mettech_intl.model.Users;
 import mettech_intl.service.UserService;
 import org.springframework.http.HttpStatus;
@@ -28,25 +30,51 @@ public class AuthenticationController {
             return ResponseEntity.ok().build();
         } catch (UserAlreadyExistsException ex){
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        } catch (EmailFailureException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginBody loginBody){
-        String jwt = userService.loginUser(loginBody);
+    public ResponseEntity<LoginResponse> loginUser(@Valid @RequestBody LoginBody loginBody) {
+        String jwt = null;
+        try{
+            jwt = userService.loginUser(loginBody);
+        } catch (UserNotVerifiedException ex){
+            LoginResponse response = new LoginResponse();
+            response.setSuccess(false);
+            String reason = "USER_NOT_VERIFIED";
+            if(ex.isNewEmailSent()){
+                reason +="_EMAIL_RESENT";
+            }
+            response.setFailureReason(reason);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(response);
+        } catch (EmailFailureException ex){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
         if(jwt == null){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         else{
             LoginResponse response = new LoginResponse();
             response.setJwt(jwt);
+            response.setSuccess(true);
             return ResponseEntity.ok(response);
+        }
+    }
+
+    @PostMapping("/verify")
+    public ResponseEntity verifyEmail(@RequestParam String token){
+        if(userService.verifyUser(token)){
+            return ResponseEntity.ok().build();
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
     }
 
     @GetMapping("/me")
     public Users getLoggedInUserProfile(@AuthenticationPrincipal Users user){
         return user;
-
     }
 }

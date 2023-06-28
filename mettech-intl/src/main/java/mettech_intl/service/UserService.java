@@ -1,27 +1,39 @@
 package mettech_intl.service;
 
+import jakarta.transaction.Transactional;
 import mettech_intl.api.models.LoginBody;
 import mettech_intl.api.models.RegistrationBody;
+import mettech_intl.exception.EmailFailureException;
+import mettech_intl.exception.UserNotVerifiedException;
+import mettech_intl.model.VerificationToken;
 import mettech_intl.model.dao.UsersRepository;
 import mettech_intl.exception.UserAlreadyExistsException;
 import mettech_intl.model.Users;
+import mettech_intl.model.dao.VerificationTokenRepository;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
     private UsersRepository usersRepository;
+    private VerificationTokenRepository verificationTokenRepository;
     private EncryptionService encryptionService;
     private JWTService jwtService;
 
-    public UserService(UsersRepository usersRepository, EncryptionService encryptionService, JWTService jwtService) {
+    private EmailService emailService;
+
+    public UserService(UsersRepository usersRepository, VerificationTokenRepository verificationTokenRepository, EncryptionService encryptionService, JWTService jwtService, EmailService emailService) {
         this.usersRepository = usersRepository;
+        this.verificationTokenRepository=verificationTokenRepository;
         this.encryptionService = encryptionService;
         this.jwtService = jwtService;
+        this.emailService = emailService;
     }
 
-    public Users registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException {
+    public Users registerUser(RegistrationBody registrationBody) throws UserAlreadyExistsException, EmailFailureException {
         if(usersRepository.findByEmailIgnoreCase(registrationBody.getEmail()).isPresent() || usersRepository.findByUsernameIgnoreCase(registrationBody.getUsername()).isPresent()){
             throw new UserAlreadyExistsException();
         }
@@ -31,18 +43,58 @@ public class UserService {
         user.setLastName(registrationBody.getLastName());
         user.setUsername(registrationBody.getUsername());
         user.setPassword(encryptionService.encryptPassword(registrationBody.getPassword()));
-        user = usersRepository.save(user);
-        return user;
+        VerificationToken verificationToken = createVerificationToken(user);
+        emailService.sendVerificationEmail(verificationToken);
+       // verificationTokenRepository.save(verificationToken);
+        return usersRepository.save(user);
     }
 
-    public String loginUser(LoginBody loginBody){
+    private VerificationToken createVerificationToken(Users user){
+        VerificationToken verificationToken = new VerificationToken();
+        verificationToken.setToken(jwtService.generateJWT(user));
+        verificationToken.setCreatedTimestamp(new Timestamp(System.currentTimeMillis()));
+        verificationToken.setUser(user);
+        user.getVerificationTokens().add(verificationToken);
+        return verificationToken;
+    }
+
+    public String loginUser(LoginBody loginBody) throws UserNotVerifiedException, EmailFailureException {
         Optional<Users> optionalUsers = usersRepository.findByUsernameIgnoreCase(loginBody.getUsername());
         if(optionalUsers.isPresent()){
             Users user = optionalUsers.get();
             if(encryptionService.verifyPassword(loginBody.getPassword(), user.getPassword())){
-                return jwtService.generateJWT(user);
+                if(user.getEmailVerified()) {
+                    return jwtService.generateJWT(user);
+                }
+                else {
+                    List<VerificationToken> verificationTokenList = user.getVerificationTokens();
+                    boolean resend = verificationTokenList.size() == 0
+                            || verificationTokenList.get(0).getCreatedTimestamp().before(new Timestamp(System.currentTimeMillis()-(60 * 60 * 1000)));
+                    if(resend){
+                        VerificationToken verificationToken = createVerificationToken(user);
+                        verificationTokenRepository.save(verificationToken);
+                        emailService.sendVerificationEmail(verificationToken);
+                    }
+                    throw new UserNotVerifiedException(resend);
+                }
             }
         }
         return  null;
+    }
+
+    @Transactional
+    public boolean verifyUser(String token){
+        Optional<VerificationToken> optionalVerificationToken = verificationTokenRepository.findByToken(token);
+        if(optionalVerificationToken.isPresent()){
+            VerificationToken verificationToken = optionalVerificationToken.get();
+            Users user = verificationToken.getUser();
+            if(!user.getEmailVerified()){
+                user.setEmailVerified(true);
+                usersRepository.save(user);
+                verificationTokenRepository.deleteByUser(user);
+                return true;
+            }
+        }
+        return false;
     }
 }

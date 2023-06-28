@@ -1,15 +1,26 @@
 package mettech_intl.api.models;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public class LoginResponse {
-    @NotNull
-    @NotBlank
     private String jwt;
+    private boolean success;
+    private String failureReason;
 
-    @NotNull
-    @NotBlank
+    public String getFailureReason() {
+        return failureReason;
+    }
+
+    public void setFailureReason(String failureReason) {
+        this.failureReason = failureReason;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
+
+    public void setSuccess(boolean success) {
+        this.success = success;
+    }
+
     public String getJwt() {
         return jwt;
     }
