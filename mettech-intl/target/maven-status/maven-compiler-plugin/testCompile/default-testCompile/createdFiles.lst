@@ -1,0 +1,4 @@
+mettech_intl\service\EncryptionServiceTest.class
+mettech_intl\service\UserServiceTest.class
+mettech_intl\ApplicationTests.class
+mettech_intl\service\JWTServiceTest.class

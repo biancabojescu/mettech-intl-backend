@@ -1,0 +1,6 @@
+projectKey=mettech-intl
+serverUrl=http://localhost:9000
+serverVersion=10.0.0.68432
+dashboardUrl=http://localhost:9000/dashboard?id=mettech-intl
+ceTaskId=AYlAff-qJVDFHovjjr9a
+ceTaskUrl=http://localhost:9000/api/ce/task?id=AYlAff-qJVDFHovjjr9a
