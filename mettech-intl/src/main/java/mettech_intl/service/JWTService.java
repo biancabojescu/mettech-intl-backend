@@ -2,6 +2,8 @@ package mettech_intl.service;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.exceptions.JWTDecodeException;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import jakarta.annotation.PostConstruct;
 import mettech_intl.model.Users;
 import org.apache.coyote.http11.filters.SavedRequestInputFilter;
@@ -43,7 +45,8 @@ public class JWTService {
                 .sign(algorithm);
     }
 
-    public String getUsername(String token){
+    public String getUsername(String token) {
+        DecodedJWT jwt = JWT.require(algorithm).build().verify(token);
         return JWT.decode(token).getClaim(USERNAME_KEY).asString();
     }
 }
