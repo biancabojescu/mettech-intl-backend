@@ -2,8 +2,10 @@ package mettech_intl.service;
 
 import jakarta.transaction.Transactional;
 import mettech_intl.api.models.LoginBody;
+import mettech_intl.api.models.PasswordResetBody;
 import mettech_intl.api.models.RegistrationBody;
 import mettech_intl.exception.EmailFailureException;
+import mettech_intl.exception.EmailNotFoundException;
 import mettech_intl.exception.UserNotVerifiedException;
 import mettech_intl.model.VerificationToken;
 import mettech_intl.model.dao.UsersRepository;
@@ -51,7 +53,7 @@ public class UserService {
 
     private VerificationToken createVerificationToken(Users user){
         VerificationToken verificationToken = new VerificationToken();
-        verificationToken.setToken(jwtService.generateJWT(user));
+        verificationToken.setToken(jwtService.generateVerificationJWT(user));
         verificationToken.setCreatedTimestamp(new Timestamp(System.currentTimeMillis()));
         verificationToken.setUser(user);
         user.getVerificationTokens().add(verificationToken);
@@ -96,5 +98,26 @@ public class UserService {
             }
         }
         return false;
+    }
+
+    public void forgotPassword(String email) throws EmailNotFoundException, EmailFailureException {
+        Optional<Users> optionalUsers = usersRepository.findByEmailIgnoreCase(email);
+        if(optionalUsers.isPresent()){
+            Users user = optionalUsers.get();
+            String token = jwtService.generatePasswordResetJWT(user);
+            emailService.sendPasswordResetEmail(user, token);
+        } else{
+            throw new EmailNotFoundException();
+        }
+    }
+
+    public void resetPassword(PasswordResetBody body){
+        String email = jwtService.getResetPasswordEmail(body.getToken());
+        Optional<Users> opUser = usersRepository.findByEmailIgnoreCase(email);
+        if(opUser.isPresent()){
+            Users user = opUser.get();
+            user.setPassword(encryptionService.encryptPassword(body.getPassword()));
+            usersRepository.save(user);
+        }
     }
 }

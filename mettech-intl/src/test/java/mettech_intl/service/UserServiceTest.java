@@ -7,11 +7,15 @@ import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
 import jakarta.transaction.Transactional;
 import mettech_intl.api.models.LoginBody;
+import mettech_intl.api.models.PasswordResetBody;
 import mettech_intl.api.models.RegistrationBody;
 import mettech_intl.exception.EmailFailureException;
+import mettech_intl.exception.EmailNotFoundException;
 import mettech_intl.exception.UserAlreadyExistsException;
 import mettech_intl.exception.UserNotVerifiedException;
+import mettech_intl.model.Users;
 import mettech_intl.model.VerificationToken;
+import mettech_intl.model.dao.UsersRepository;
 import mettech_intl.model.dao.VerificationTokenRepository;
 import org.junit.jupiter.api.Assertions;
 
@@ -34,6 +38,12 @@ public class UserServiceTest {
     private UserService userService;
     @Autowired
     private VerificationTokenRepository verificationTokenRepository;
+    @Autowired
+    private JWTService jwtService;
+    @Autowired
+    private UsersRepository usersRepository;
+    @Autowired
+    private EncryptionService encryptionService;
 
     @Test
     @Transactional
@@ -106,5 +116,28 @@ public class UserServiceTest {
             Assertions.assertNotNull(body, "The user should now be verified.");
         }
     }
+
+    @Test
+    @Transactional
+    public void testForgotPassword() throws MessagingException {
+        Assertions.assertThrows(EmailNotFoundException.class, ()->userService.forgotPassword("UserNotExist@junit.com"));
+        Assertions.assertDoesNotThrow(()->userService.forgotPassword("UserA@junit.com"), "Non existing email should be rejected.");
+        Assertions.assertEquals("UserA@junit.com", greenMailExtension.getReceivedMessages()[0]
+                .getRecipients(Message.RecipientType.TO)[0].toString(), "Password reset email should be sent.");
+    }
+
+    @Test
+    @Transactional
+    public void testResetPassword(){
+        Users user = usersRepository.findByUsernameIgnoreCase("UserA").get();
+        String token = jwtService.generatePasswordResetJWT(user);
+        PasswordResetBody body = new PasswordResetBody();
+        body.setToken(token);
+        body.setPassword("parolaNoua123");
+        userService.resetPassword(body);
+        user = usersRepository.findByUsernameIgnoreCase("UserA").get();
+        Assertions.assertTrue(encryptionService.verifyPassword("parolaNoua123",user.getPassword()),"Password change should be written to DB.");
+    }
+
 
 }

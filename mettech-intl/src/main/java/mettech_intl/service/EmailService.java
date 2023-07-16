@@ -1,6 +1,7 @@
 package mettech_intl.service;
 
 import mettech_intl.exception.EmailFailureException;
+import mettech_intl.model.Users;
 import mettech_intl.model.VerificationToken;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
@@ -29,11 +30,25 @@ public class EmailService {
     public void sendVerificationEmail(VerificationToken verificationToken) throws EmailFailureException {
         SimpleMailMessage message = makeMailMessage();
         message.setTo(verificationToken.getUser().getEmail());
-        message.setSubject("Verify your email to active your account.");
-        message.setText("Please follow the link below to verify your email to activate your account.\n" + url + "/auth/verify?token=" + verificationToken.getToken());
+        message.setSubject("mettech intl - verify your mail");
+        message.setText("Vă rog, accesați link-ul următor pentru a vă activa contul.\n"
+                + url + "/auth/verify?token=" + verificationToken.getToken());
         try{
             javaMailSender.send(message);
         } catch(MailException ex){
+            throw new EmailFailureException();
+        }
+    }
+
+    public void sendPasswordResetEmail(Users user, String token) throws EmailFailureException{
+        SimpleMailMessage message = makeMailMessage();
+        message.setTo(user.getEmail());
+        message.setSubject("mettech intl. - password reset");
+        message.setText("Ați solicitat recuperarea parolei. Gasiți mai jos link-ul ce vă va permite resetarea accesteia.\n" +
+                url + "/auth/reset?token="+token);
+        try{
+            javaMailSender.send(message);
+        } catch (MailException ex){
             throw new EmailFailureException();
         }
     }

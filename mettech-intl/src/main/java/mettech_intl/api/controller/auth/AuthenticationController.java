@@ -3,8 +3,10 @@ package mettech_intl.api.controller.auth;
 import jakarta.validation.Valid;
 import mettech_intl.api.models.LoginBody;
 import mettech_intl.api.models.LoginResponse;
+import mettech_intl.api.models.PasswordResetBody;
 import mettech_intl.api.models.RegistrationBody;
 import mettech_intl.exception.EmailFailureException;
+import mettech_intl.exception.EmailNotFoundException;
 import mettech_intl.exception.UserAlreadyExistsException;
 import mettech_intl.exception.UserNotVerifiedException;
 import mettech_intl.model.Users;
@@ -76,5 +78,23 @@ public class AuthenticationController {
     @GetMapping("/me")
     public Users getLoggedInUserProfile(@AuthenticationPrincipal Users user){
         return user;
+    }
+
+    @PostMapping("/forgot")
+    public ResponseEntity forgotPassword(@RequestParam String email){
+        try{
+            userService.forgotPassword(email);
+            return ResponseEntity.ok().build();
+        }catch (EmailNotFoundException ex) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (EmailFailureException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/reset")
+    public ResponseEntity resetPassword(@Valid @RequestBody PasswordResetBody body){
+        userService.resetPassword(body);
+        return ResponseEntity.ok().build();
     }
 }
