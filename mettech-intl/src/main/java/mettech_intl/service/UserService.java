@@ -120,4 +120,8 @@ public class UserService {
             usersRepository.save(user);
         }
     }
+
+    public boolean userHasPermissionToUser(Users user, Long id){
+        return user.getId() == id;
+    }
 }
