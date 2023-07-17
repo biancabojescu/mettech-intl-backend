@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: mettech_intl.api.contoller.auth.AuthenticationControllerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 8.426 s - in mettech_intl.api.contoller.auth.AuthenticationControllerTest

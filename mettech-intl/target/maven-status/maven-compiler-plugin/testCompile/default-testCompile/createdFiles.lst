@@ -1,4 +1,10 @@
-mettech_intl\service\EncryptionServiceTest.class
 mettech_intl\service\UserServiceTest.class
+mettech_intl\api\contoller\auth\AuthenticationControllerTest.class
+mettech_intl\api\security\JUnitUserDetailsService.class
+mettech_intl\api\security\JWTRequestFilterTest.class
+mettech_intl\service\EncryptionServiceTest.class
+mettech_intl\api\contoller\product\ProductTest.class
+mettech_intl\api\contoller\order\OrderControllerTest.class
+mettech_intl\api\contoller\order\OrderControllerTest$1.class
 mettech_intl\ApplicationTests.class
 mettech_intl\service\JWTServiceTest.class

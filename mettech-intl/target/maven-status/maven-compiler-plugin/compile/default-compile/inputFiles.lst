@@ -19,10 +19,12 @@ C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettec
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\model\Address.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\exception\UserAlreadyExistsException.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\service\EmailService.java
+C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\api\models\PasswordResetBody.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\api\models\LoginResponse.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\model\Inventory.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\service\OrderService.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\api\security\JWTRequestFilter.java
+C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\exception\EmailNotFoundException.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\model\OrdersQuantities.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\exception\EmailFailureException.java
 C:\Users\bianc\OneDrive\Desktop\BackEnd mettech intl\mettech-intl-backend\mettech-intl\src\main\java\mettech_intl\api\security\WebSecurityConfig.java

@@ -18,11 +18,13 @@ mettech_intl\service\OrderService.class
 mettech_intl\api\controller\product\ProductController.class
 mettech_intl\model\Address.class
 mettech_intl\api\controller\auth\AuthenticationController.class
+mettech_intl\api\models\PasswordResetBody.class
 mettech_intl\service\EncryptionService.class
 mettech_intl\service\JWTService.class
 mettech_intl\api\models\RegistrationBody.class
 mettech_intl\model\dao\UsersRepository.class
 mettech_intl\api\security\JWTRequestFilter.class
+mettech_intl\exception\EmailNotFoundException.class
 mettech_intl\Application.class
 mettech_intl\api\controller\order\OrdersController.class
 mettech_intl\model\Users.class
