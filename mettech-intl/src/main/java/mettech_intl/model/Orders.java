@@ -24,6 +24,9 @@ public class Orders {
     @OneToMany(mappedBy = "order", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<OrdersQuantities> quantities = new ArrayList<>();
 
+    @Column(name = "status", nullable = false)
+    private String status;
+
     public List<OrdersQuantities> getQuantities() {
         return quantities;
     }
@@ -54,5 +57,13 @@ public class Orders {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

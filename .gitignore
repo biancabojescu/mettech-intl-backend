@@ -1,0 +1,56 @@
+# Maven build outputs, reports, and downloaded wrapper binaries
+target/
+.m2/
+.mvn/wrapper/maven-wrapper.jar
+*.class
+
+# Local configuration and secrets; keep sanitized defaults and test fixtures tracked
+.env
+.env.*
+!.env.example
+!.env.sample
+application-local.properties
+application-local.yml
+application-local.yaml
+application-secrets.properties
+application-secrets.yml
+application-secrets.yaml
+settings-local.xml
+*.jks
+*.keystore
+*.p12
+*.pfx
+*.key
+
+# IDE and editor state
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.classpath
+.project
+.settings/
+.factorypath
+bin/
+*.swp
+*.swo
+*~
+
+# Logs, caches, temporary files, and local analysis outputs
+*.log
+logs/
+*.tmp
+*.temp
+.cache/
+.sonar/
+.scannerwork/
+hs_err_pid*
+replay_pid*
+
+# Operating system metadata
+.DS_Store
+._*
+Thumbs.db
+Desktop.ini
+$RECYCLE.BIN/

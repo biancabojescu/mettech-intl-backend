@@ -16,8 +16,6 @@
 	<properties>
 		<java.version>17</java.version>
 		<sonar.host.url>http://localhost:9000/</sonar.host.url>
-		<sonar.token>sqp_10bca13e0244fd87d6ab04079d2728daf364bcaf
-		</sonar.token>
 		<sonar.projectKey>mettech-intl</sonar.projectKey>
 	</properties>
 	<dependencies>
